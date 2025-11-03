@@ -1,0 +1,72 @@
+# Byte-compiled / optimized / C extensions
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Python packaging
+pip-wheel-metadata/
+*.egg
+*.whl
+
+# Jupyter
+.ipynb_checkpoints
+*.ipynb_checkpoints
+
+# VSCode
+.vscode/
+
+# macOS
+.DS_Store
+
+# Logs and databases
+*.log
+*.sqlite3
+
+# Unit test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Type checkers / caches
+.mypy_cache/
+.pyre/
+.pytype/
+
+# IDEs
+.idea/
+
+# dotenv
+.env
+.env.*
+
+# MLflow runs, models and artifacts
+mlruns/
+models/
+
+# Model artifact extensions
+*.h5
+*.pt
+*.ckpt
+*.joblib
+*.pkl
+
+# Plots / generated images (optional - remove if you track plots)
+plots/*.png
+plots/*.jpg
+
+# System files
+Thumbs.db
