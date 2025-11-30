@@ -75,12 +75,18 @@ To generate evaluation reports and plots (Confusion Matrix, Target Distribution,
 python3 src/evaluate.py --data_dir data/processed --models_dir models --output_dir reports
 ```
 
-The generated plots will be saved in the `reports/` directory:
-- `target_distribution.png`
-- `corr_heatmap_or_box.png`
-- `confusion_matrix.png` (requires trained baseline model)
+The generated plots will be saved in the `reports/` directory
 
 ## Notebooks
 
 For exploratory data analysis and initial experiments, refer to:
 - `notebooks/Text-Sentiment.ipynb`
+
+To deactivate the virtual environment:
+```bash
+deactivate
+```
+
+Cheers!
+
+Zeyad and Hashem
