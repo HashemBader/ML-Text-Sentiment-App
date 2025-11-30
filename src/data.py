@@ -1,74 +1,70 @@
-"""
-data.py
-- Loads raw IMDb CSV (from Kaggle)
-- Cleans minimal issues
-- Creates classification target if missing
-- Writes processed train/val/test CSVs to out_dir
-"""
-import argparse
 import pandas as pd
+import re
+import string
+import os
+import argparse
 from sklearn.model_selection import train_test_split
-from utils import set_seed, ensure_dir
 
-set_seed(42)
+# Constants
+RAW_DATA_PATH = "data/imdb_dataset.csv"
+CLEANED_DATA_PATH = "data/imdb_dataset_cleaned.csv"
+PROCESSED_DIR = "data/processed"
+RANDOM_STATE = 42
 
-DEFAULT_CLASS_COL = "sentiment"     # expected 'positive' / 'negative'
-DEFAULT_REG_COL = "rating"          # numeric rating column if present
+def clean_text(text):
+    """
+    Cleans the input text by performing lowercasing, HTML removal,
+    punctuation removal, and whitespace normalization.
+    """
+    text = text.lower()
+    text = re.sub(r'<.*?>', '', text)
+    text = text.translate(str.maketrans('', '', string.punctuation))
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text
 
-def load_data(path: str):
-    df = pd.read_csv(path)
-    return df
+def ensure_dir(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
 
-def prepare_targets(df: pd.DataFrame, class_col=DEFAULT_CLASS_COL, reg_col=DEFAULT_REG_COL):
-    # If classification column is missing but numeric rating exists, derive sentiment.
-    if class_col not in df.columns:
-        if reg_col in df.columns:
-            # threshold: rating >= 7 -> positive (this is a reasonable default)
-            df[class_col] = df[reg_col].apply(lambda r: "positive" if float(r) >= 7.0 else "negative")
-        else:
-            raise ValueError(f"Neither {class_col} nor {reg_col} present in dataframe. Please provide labels.")
-    # Ensure regression column exists; if not, attempt to create approximate using rating if possible.
-    if reg_col not in df.columns:
-        # If numeric rating cannot be found, create placeholder (NaNs) — user may fill later
-        df[reg_col] = pd.NA
-    return df
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input_csv", type=str, default=RAW_DATA_PATH, help="Path to raw IMDb csv")
+    parser.add_argument("--out_dir", type=str, default=PROCESSED_DIR, help="Directory to save processed CSVs")
+    args = parser.parse_args()
 
-def minimal_cleaning(df: pd.DataFrame):
-    # Basic cleaning — drop rows with empty reviews
-    text_col = "review" if "review" in df.columns else df.columns[0]
-    df = df.dropna(subset=[text_col]).reset_index(drop=True)
-    # Remove duplicates
-    df = df.drop_duplicates(subset=[text_col]).reset_index(drop=True)
-    return df
+    print(f"Loading data from {args.input_csv}...")
+    if not os.path.exists(args.input_csv):
+        print(f"Error: File not found at {args.input_csv}")
+        return
 
-def split_and_save(df: pd.DataFrame, out_dir: str, test_size=0.2, val_size=0.1, random_state=42):
-    ensure_dir(out_dir)
-    text_col = "review" if "review" in df.columns else df.columns[0]
-    class_col = DEFAULT_CLASS_COL
-    # First split off test
-    train_val, test = train_test_split(df, test_size=test_size, stratify=df[class_col], random_state=random_state)
-    # Then split train/val
-    val_relative = val_size / (1 - test_size)
-    train, val = train_test_split(train_val, test_size=val_relative, stratify=train_val[class_col], random_state=random_state)
-    train.to_csv(f"{out_dir}/train.csv", index=False)
-    val.to_csv(f"{out_dir}/val.csv", index=False)
-    test.to_csv(f"{out_dir}/test.csv", index=False)
-    return train, val, test
+    df = pd.read_csv(args.input_csv)
+    print(f"Original shape: {df.shape}")
 
-def main(args):
-    df = load_data(args.input_csv)
-    df = prepare_targets(df)
-    df = minimal_cleaning(df)
-    train, val, test = split_and_save(df, args.out_dir, test_size=args.test_size, val_size=args.val_size, random_state=args.seed)
-    print("Saved processed files to", args.out_dir)
-    print("Train shape:", train.shape, "Val shape:", val.shape, "Test shape:", test.shape)
+    print("Dropping duplicates...")
+    df = df.drop_duplicates()
+    print(f"Shape after dropping duplicates: {df.shape}")
+
+    print("Cleaning text...")
+    if 'review' in df.columns:
+        df['review'] = df['review'].apply(clean_text)
+    else:
+        print("Error: 'review' column not found.")
+        return
+
+    print(f"Saving cleaned dataset to {CLEANED_DATA_PATH}...")
+    df.to_csv(CLEANED_DATA_PATH, index=False)
+
+    print(f"Splitting and saving to {args.out_dir}...")
+    ensure_dir(args.out_dir)
+
+    train_df, test_df = train_test_split(
+        df, test_size=0.3, random_state=RANDOM_STATE, stratify=df['sentiment']
+    )
+    
+    train_df.to_csv(os.path.join(args.out_dir, "train.csv"), index=False)
+    test_df.to_csv(os.path.join(args.out_dir, "test.csv"), index=False)
+    
+    print("Done.")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--input_csv", type=str, required=True, help="Path to raw IMDb csv")
-    parser.add_argument("--out_dir", type=str, default="data/processed", help="Directory to save processed CSVs")
-    parser.add_argument("--test_size", type=float, default=0.2)
-    parser.add_argument("--val_size", type=float, default=0.1)
-    parser.add_argument("--seed", type=int, default=42)
-    args = parser.parse_args()
-    main(args)
+    main()

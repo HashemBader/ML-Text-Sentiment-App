@@ -55,14 +55,13 @@ htmlcov/
 
 # MLflow runs, models and artifacts
 mlruns/
-models/
 
 # Model artifact extensions
 *.h5
 *.pt
 *.ckpt
 *.joblib
-*.pkl
+
 
 # System files
 Thumbs.db
