@@ -82,7 +82,7 @@ The generated plots will be saved in the `reports/` directory
 Run the web UI with a Flask backend:
 
 ```bash
-python3 src/web_app.py
+python3 project/web_app.py
 ```
 
 Then open:
