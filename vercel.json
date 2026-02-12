@@ -3,7 +3,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "project/web_app.py"
+      "dest": "/api/web_app.py"
     }
   ]
 }
