@@ -6,6 +6,11 @@ import re
 from typing import Tuple
 from flask import Flask, jsonify, render_template, request
 import joblib
+import sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
+import text_preprocess
+
 
 MODEL_FILENAME = "classification_logreg.joblib"
 MODEL_PATH = os.path.abspath(
@@ -14,8 +19,8 @@ MODEL_PATH = os.path.abspath(
 
 app = Flask(
     __name__,
-    template_folder=os.path.join(os.path.dirname(__file__), "..", "web", "templates"),
-    static_folder=os.path.join(os.path.dirname(__file__), "..", "web", "static"),
+    template_folder=os.path.join(os.path.dirname(__file__), "web", "templates"),
+    static_folder=os.path.join(os.path.dirname(__file__), "web", "static"),
 )
 
 

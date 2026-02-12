@@ -60,7 +60,7 @@ htmlcov/
 *.h5
 *.pt
 *.ckpt
-*.joblib
+
 
 
 # System files
