@@ -9,7 +9,7 @@ import joblib
 
 MODEL_FILENAME = "classification_logreg.joblib"
 MODEL_PATH = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..", "models", MODEL_FILENAME)
+    os.path.join(os.path.dirname(__file__), "models", MODEL_FILENAME)
 )
 
 app = Flask(
