@@ -1,19 +1,9 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "project/web_app.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "50mb"
-      }
-    }
-  ],
   "routes": [
     {
       "src": "/(.*)",
       "dest": "project/web_app.py"
     }
-  ],
-  "installCommand": "pip install -r requirements.txt"
+  ]
 }
