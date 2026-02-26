@@ -109,6 +109,4 @@ def predict(body: PredictRequest):
     )
 
 
-# Vercel ASGI handler
-from mangum import Mangum  # noqa: E402
-handler = Mangum(app)
+
