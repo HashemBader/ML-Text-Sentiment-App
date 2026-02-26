@@ -1,7 +1,0 @@
-{
-  "functions": {
-    "api/index.py": {
-      "excludeFiles": "{notebooks/**,data/**,mlruns/**,plots/**,src/**,web/**,.git/**}"
-    }
-  }
-}
