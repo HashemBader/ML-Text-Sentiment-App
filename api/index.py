@@ -20,9 +20,7 @@ model = None
 def get_model():
     global model
     if model is None:
-        model = joblib.load(
-            os.path.join(os.path.dirname(__file__), "..", "classification_logreg.joblib")
-        )
+        model = joblib.load("classification_logreg.joblib")
     return model
 
 app = FastAPI(title="Sentiment Analysis API")
