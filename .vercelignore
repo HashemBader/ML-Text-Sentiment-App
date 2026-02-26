@@ -1,0 +1,8 @@
+data/
+mlruns/
+notebooks/
+plots/
+src/
+web/
+models/
+.git/
